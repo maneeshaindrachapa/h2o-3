@@ -42,7 +42,7 @@ public class MaxRGLMModel extends Model<MaxRGLMModel, MaxRGLMModel.MaxRGLMParame
                 "information on predictor relevance");
     }
     
-    public void generateResultFrame(String[][] bestModelPredictors,  double[] bestR2Values) {
+    public void generateResultFrame(String[][] bestModelPredictors,  double[] bestR2Values, String[] modelIDs) {
         int numRows = bestR2Values.length;
         String[] modelNames = new String[numRows];
         String[] predNames = new String[numRows];
@@ -53,10 +53,11 @@ public class MaxRGLMModel extends Model<MaxRGLMModel, MaxRGLMModel.MaxRGLMParame
         }
         Vec.VectorGroup vg = Vec.VectorGroup.VG_LEN1;
         Vec modNames = Vec.makeVec(modelNames, vg.addVec());
+        Vec modelIDV = Vec.makeVec(modelIDs, vg.addVec());
         Vec r2 = Vec.makeVec(bestR2Values, vg.addVec());
         Vec predN = Vec.makeVec(predNames, vg.addVec());
-        String[] colNames = new String[]{"model_name", "best_r2_value", "predictor_names"};
-        Frame resultFrame = new Frame(Key.<Frame>make(), colNames, new Vec[]{modNames, r2, predN});
+        String[] colNames = new String[]{"model_name", "model_id", "best_r2_value", "predictor_names"};
+        Frame resultFrame = new Frame(Key.<Frame>make(), colNames, new Vec[]{modNames, modelIDV, r2, predN});
         DKV.put(resultFrame);
         _output._resultFrameKey = resultFrame._key;
         _output._result_frame_key = _output._resultFrameKey.toString();

@@ -130,6 +130,7 @@ public class MaxRGLM extends ModelBuilder<MaxRGLMModel, MaxRGLMModel.MaxRGLMPara
     private class MaxRGLMDriver extends Driver {
         public final void buildModel() {
             MaxRGLMModel model = null;
+            String[] modelIDs = new String[_parms._max_predictor_number];   // store model IDs
             try {
                 model = new MaxRGLMModel(dest(), _parms, new MaxRGLMModel.MaxRGLMModelOutput(MaxRGLM.this, _dinfo));
                 model.write_lock(_job);
@@ -147,12 +148,12 @@ public class MaxRGLM extends ModelBuilder<MaxRGLMModel, MaxRGLMModel.MaxRGLMPara
                     // call parallel build
                     GLM[] glmResults = ModelBuilderHelper.trainModelsParallel(glmBuilder, _parms._nparallelism);
                     // extract R2 and collect the best R2 and the predictors set
-                    extractBestModels(_bestModelPredictors, _bestR2Values, glmResults, predNum-1);
+                    extractBestModels(_bestModelPredictors, _bestR2Values, glmResults, predNum-1, modelIDs);
                     // remove training frames from DKV
                     removeTrainingFrames(trainingFrames);
                     _job.update(predNum, "finished building all models with "+predNum+" predictors.");
                 }
-                model.generateResultFrame(_bestModelPredictors, _bestR2Values);
+                model.generateResultFrame(_bestModelPredictors, _bestR2Values, modelIDs);
                 _job.update(0, "Completed GLM model building.  Extracting results now.");
                 model.update(_job);
                 // copy best R2 and best predictors to model._output

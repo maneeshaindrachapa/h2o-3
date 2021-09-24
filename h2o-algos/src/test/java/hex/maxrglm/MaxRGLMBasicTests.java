@@ -1,6 +1,7 @@
 package hex.maxrglm;
 
 import hex.SplitFrame;
+import hex.glm.GLMModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,7 @@ import static hex.gam.GamTestPiping.massageFrame;
 import static hex.genmodel.utils.MathUtils.combinatorial;
 import static hex.glm.GLMModel.GLMParameters.Family.gaussian;
 import static hex.maxrglm.MaxRGLMUtils.updatePredIndices;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 import static water.TestUtil.parseTestFile;
 
@@ -46,7 +48,7 @@ public class MaxRGLMBasicTests {
         int[] bounds = IntStream.range(zeroBound, maxPredNum).toArray();   // highest combo value
         int numModels = combinatorial(maxPredNum, predNum);
         for (int index = 0; index < numModels; index++) {    // generate one combo
-            Assert.assertArrayEquals("Array must be equal.", 
+            assertArrayEquals("Array must be equal.", 
                     Arrays.stream(predIndices).boxed().toArray(Integer[]::new), answers[index]);
             updatePredIndices(predIndices, bounds);
         }
@@ -160,14 +162,22 @@ public class MaxRGLMBasicTests {
             Scope.track_generic(model); // best one predictor model
             Frame resultFrame = model.resultFrame();
             Scope.track(resultFrame);
-            // check with model summary r2 values
+
             double[] bestR2 = model._output._best_r2_values;
+            String[][] bestPredictorSubsets = model._output._best_model_predictors;
             int numModels = bestR2.length;
-            for (int index=0; index<numModels; index++) 
-                assertTrue(Math.abs(bestR2[index]-resultFrame.vec(1).at(index)) < tol);
+            for (int index=0; index<numModels; index++) {
+                // check with model summary r2 values
+                assertTrue(Math.abs(bestR2[index] - resultFrame.vec(2).at(index)) < tol);
+                // grab the best model, check model can score and model coefficients agree with what is in the result frame
+                GLMModel oneModel = DKV.getGet(resultFrame.vec(1).stringAt(index));
+                Frame scoreFrame = oneModel.score(trainF);  // check it can score
+                Scope.track(scoreFrame);
+                String[] coeff = oneModel._output._coefficient_names;
+                assertArrayEquals("best predictor subset containing different predictors", coeff, bestPredictorSubsets[index]);
+            }
         } finally {
             Scope.exit();
         }
     }
-
 }

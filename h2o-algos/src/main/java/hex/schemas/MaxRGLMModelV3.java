@@ -1,7 +1,9 @@
 package hex.schemas;
 
 import hex.maxrglm.MaxRGLMModel;
+import water.Key;
 import water.api.API;
+import water.api.schemas3.KeyV3;
 import water.api.schemas3.ModelOutputSchemaV3;
 import water.api.schemas3.ModelSchemaV3;
 import water.api.schemas3.TwoDimTableV3;
@@ -19,9 +21,8 @@ public class MaxRGLMModelV3 extends ModelSchemaV3<MaxRGLMModel, MaxRGLMModelV3, 
         double[] best_r2_values;  // store the best R2 values of the best models with fix number of predictors
 
         @API(help="Key of result frame containing best 1-predictor model R2 value, model_id and others")
-        String result_frame_key;  // store the best R2 values of the best models with fix number of predictors
-        
-        
+        KeyV3.FrameKeyV3 result_frame_key; ;  // store the best R2 values of the best models with fix number of predictors
+
         @Override
         public MaxRGLMModelOutputV3 fillFromImpl(MaxRGLMModel.MaxRGLMModelOutput impl) {
             super.fillFromImpl(impl);   // fill in the best_model_predictors_r2 table here when done

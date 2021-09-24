@@ -201,7 +201,7 @@ public class MaxRGLMUtils {
      * @param numPredMinus1
      */
     public static void extractBestModels(String[][] bestModelPredictors, double[] bestR2Values, GLM[] glmResults, 
-                                         int numPredMinus1) {
+                                         int numPredMinus1, String[] bestModelIDs) {
         double bestR2Val = 0;
         String[] bestPreds = null;
         int numModels = glmResults.length;
@@ -217,6 +217,7 @@ public class MaxRGLMUtils {
             if (currR2 > bestR2Val) {
                 bestR2Val = currR2;
                 bestPreds = oneModel._output.coefficientNames().clone();
+                bestModelIDs[numPredMinus1] = oneModel.getKey().toString();
             }
         }
         bestR2Values[numPredMinus1] = bestR2Val;
