@@ -171,10 +171,15 @@ public class MaxRGLMBasicTests {
                 assertTrue(Math.abs(bestR2[index] - resultFrame.vec(2).at(index)) < tol);
                 // grab the best model, check model can score and model coefficients agree with what is in the result frame
                 GLMModel oneModel = DKV.getGet(resultFrame.vec(1).stringAt(index));
+                Scope.track_generic(oneModel);
                 Frame scoreFrame = oneModel.score(trainF);  // check it can score
+                assertTrue(scoreFrame.numRows() == trainF.numRows());
                 Scope.track(scoreFrame);
-                String[] coeff = oneModel._output._coefficient_names;
-                assertArrayEquals("best predictor subset containing different predictors", coeff, bestPredictorSubsets[index]);
+                String[] coeff = oneModel._output._coefficient_names;   // contains the name intercept as well
+                String[] coeffWOIntercept = new String[coeff.length-1];
+                System.arraycopy(coeff, 0, coeffWOIntercept, 0, coeffWOIntercept.length);
+                assertArrayEquals("best predictor subset containing different predictors", coeffWOIntercept,
+                        bestPredictorSubsets[index]);
             }
         } finally {
             Scope.exit();

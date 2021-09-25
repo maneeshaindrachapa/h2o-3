@@ -16,6 +16,13 @@ def class_extensions():
         """
         return self._model_json["output"]["best_model_predictors"]
     
+    def result_frame(self):
+        keyString = self._model_json["output"]["result_frame_key"]
+        if keyString is None:
+            return None
+        else:
+            return h2o.get_frame(keyString)
+    
     @property
     def Lambda(self):
         """DEPRECATED. Use ``self.lambda_`` instead"""

@@ -7,6 +7,7 @@ import water.H2O;
 import water.Key;
 import water.Scope;
 import water.api.schemas3.FrameV3;
+import water.api.schemas3.KeyV3;
 import water.exceptions.H2OModelBuilderIllegalArgumentException;
 import water.fvec.Frame;
 import water.fvec.Vec;

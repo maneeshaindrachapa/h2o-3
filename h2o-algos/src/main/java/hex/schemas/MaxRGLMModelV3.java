@@ -6,7 +6,7 @@ import water.api.API;
 import water.api.schemas3.KeyV3;
 import water.api.schemas3.ModelOutputSchemaV3;
 import water.api.schemas3.ModelSchemaV3;
-import water.api.schemas3.TwoDimTableV3;
+import water.fvec.Frame;
 
 public class MaxRGLMModelV3 extends ModelSchemaV3<MaxRGLMModel, MaxRGLMModelV3, MaxRGLMModel.MaxRGLMParameters, 
         MaxRGLMV3.MaxRGLMParametersV3, MaxRGLMModel.MaxRGLMModelOutput, MaxRGLMModelV3.MaxRGLMModelOutputV3> {
@@ -21,7 +21,7 @@ public class MaxRGLMModelV3 extends ModelSchemaV3<MaxRGLMModel, MaxRGLMModelV3, 
         double[] best_r2_values;  // store the best R2 values of the best models with fix number of predictors
 
         @API(help="Key of result frame containing best 1-predictor model R2 value, model_id and others")
-        KeyV3.FrameKeyV3 result_frame_key; ;  // store the best R2 values of the best models with fix number of predictors
+        String result_frame_key; ;  // store the best R2 values of the best models with fix number of predictors
 
         @Override
         public MaxRGLMModelOutputV3 fillFromImpl(MaxRGLMModel.MaxRGLMModelOutput impl) {

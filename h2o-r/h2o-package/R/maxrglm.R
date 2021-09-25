@@ -474,5 +474,14 @@ h2o.get_best_r2_values<- function(model) {
 h2o.get_best_model_predictors<-function(model) {
   if ( is(model, "H2OModel") && (model@algorithm=='maxrglm'))
     return(model@model$best_model_predictors)
-}    
+}   
+
+#' Extracts H2OFrame that contains the model names, model_ids, best R2 values, predictor subset contents.
+#'
+#' @param model is a H2OModel with algorithm name of maxrglm
+#' @export 
+h2o.resultFrame<-function(model) {
+  if ( is(model, "H2OModel") && (model@algorithm=='maxrglm'))
+    return(h2o.getFrame(model@model$result_frame_key))
+} 
     

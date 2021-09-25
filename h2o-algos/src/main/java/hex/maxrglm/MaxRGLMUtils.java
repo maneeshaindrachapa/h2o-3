@@ -6,6 +6,7 @@ import hex.glm.GLMModel;
 import water.DKV;
 import water.Key;
 import water.Scope;
+import water.api.schemas3.KeyV3;
 import water.fvec.Frame;
 
 import java.lang.reflect.Field;
@@ -205,21 +206,25 @@ public class MaxRGLMUtils {
         double bestR2Val = 0;
         String[] bestPreds = null;
         int numModels = glmResults.length;
+        GLMModel[] extractedModels = new GLMModel[numModels];
         for (int index = 0; index < numModels; index++) {
-            GLMModel oneModel = glmResults[index].get();
-            Scope.track_generic(oneModel);
-            double currR2 = oneModel.r2();
-            if (oneModel._parms._nfolds > 0) {
-                int r2Index = Arrays.asList(oneModel._output._cross_validation_metrics_summary.getRowHeaders()).indexOf("r2");
-                Float tempR2 = (Float) oneModel._output._cross_validation_metrics_summary.get(r2Index, 0);
+            extractedModels[index] = glmResults[index].get();
+            double currR2 = extractedModels[index].r2();
+            if (extractedModels[index]._parms._nfolds > 0) {
+                int r2Index = Arrays.asList(extractedModels[index]._output._cross_validation_metrics_summary.getRowHeaders()).indexOf("r2");
+                Float tempR2 = (Float) extractedModels[index]._output._cross_validation_metrics_summary.get(r2Index, 0);
                 currR2 = tempR2.doubleValue();
             }
             if (currR2 > bestR2Val) {
                 bestR2Val = currR2;
-                bestPreds = oneModel._output.coefficientNames().clone();
-                bestModelIDs[numPredMinus1] = oneModel.getKey().toString();
+                bestPreds = extractedModels[index]._output.coefficientNames().clone();
+                bestModelIDs[numPredMinus1] = extractedModels[index].getKey().toString();
             }
         }
+        for (int index=0; index < numModels; index++) 
+            if (!extractedModels[index].getKey().toString().equals(bestModelIDs[numPredMinus1]))
+                Scope.track_generic(extractedModels[index]);    // add model to be tracked and deleted
+        
         bestR2Values[numPredMinus1] = bestR2Val;
         int predNum = bestPreds.length-1;   // copy over coefficient names excluding the intercept
         bestModelPredictors[numPredMinus1] = new String[predNum];

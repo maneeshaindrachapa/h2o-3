@@ -5,6 +5,7 @@ import hex.deeplearning.DeepLearningModel;
 import hex.glm.GLM;
 import hex.glm.GLMModel;
 import water.*;
+import water.api.schemas3.KeyV3;
 import water.fvec.Frame;
 import water.fvec.Vec;
 import water.udf.CFuncRef;
@@ -64,8 +65,8 @@ public class MaxRGLMModel extends Model<MaxRGLMModel, MaxRGLMModel.MaxRGLMParame
     }
     
     public Frame resultFrame() {
-        if (_output._resultFrameKey != null)
-            return DKV.getGet(_output._resultFrameKey);
+        if (_output._result_frame_key != null)
+            return DKV.getGet(_output._result_frame_key);
         else
             return null;
     }
