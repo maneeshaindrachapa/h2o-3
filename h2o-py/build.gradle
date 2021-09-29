@@ -17,22 +17,6 @@ ext {
     testsPath = file("tests")
 }
 
-//
-// Create a file with version for Python dist task
-//
-task createVersionFiles() {
-    doLast {
-        ["main", "client"].each {
-            file("${buildDir}/$it/h2o/").mkdirs()
-            File version_file = new File("${buildDir}/$it/h2o", "version.txt")
-            version_file.write(PROJECT_VERSION)
-
-            File build_file = new File("${buildDir}/$it/h2o", "buildinfo.txt")
-            build_file.write(buildVersion.toString())
-        }
-    }
-}
-
 task verifyDependencies(type: Exec) {
     commandLine getOsSpecificCommandLine([
             pythonexe, "scripts/verify_requirements.py",
@@ -90,7 +74,16 @@ task copyClientSrcFiles(type: Copy, dependsOn: [copyH2OClientJar]) {
     into "${buildDir}/client"
 }
 
-task buildDist(type: Exec, dependsOn: [verifyDependencies, createVersionFiles, copySrcFiles]) {
+task buildDist(type: Exec, dependsOn: [verifyDependencies, copySrcFiles]) {
+    doFirst {
+        file([buildDir, "main", "h2o"].join(File.separator)).mkdirs()
+        File version_file = file([buildDir, "main", "h2o", "version.txt"].join(File.separator))
+        version_file.createNewFile()
+        version_file.write(PROJECT_VERSION)
+        File build_file = file([buildDir, "main", "h2o", "buildinfo.txt"].join(File.separator))
+        build_file.createNewFile()
+        build_file.write(buildVersion.toString())
+    }
     workingDir new File(buildDir, "main")
     doFirst {
         file("${buildDir}/main/tmp").mkdirs()
@@ -106,7 +99,16 @@ task copyMainDist(type: Copy, dependsOn: [buildDist]) {
     into "${buildDir}"
 }
 
-task buildClientDist(type: Exec, dependsOn: [verifyDependencies, createVersionFiles, copyClientSrcFiles]) {
+task buildClientDist(type: Exec, dependsOn: [verifyDependencies, copyClientSrcFiles]) {
+    doFirst {
+        file([buildDir, "client", "h2o"].join(File.separator)).mkdirs()
+        File version_file = file([buildDir, "client", "h2o", "version.txt"].join(File.separator))
+        version_file.createNewFile()
+        version_file.write(PROJECT_VERSION)
+        File build_file = file([buildDir, "client", "h2o", "buildinfo.txt"].join(File.separator))
+        build_file.createNewFile()
+        build_file.write(buildVersion.toString())
+    }
     workingDir new File(buildDir, "client")
     doFirst {
         file("${buildDir}/client/tmp").mkdirs()
