@@ -126,7 +126,7 @@ setMethod("h2o.keyof", signature(object = "Keyed"), function(object) {
 #' @slot model_id string returned as part of every H2OModel
 #' @slot algorithm string denoting the algorithm used to build infogram
 #' @slot admissible_features string array denoting all predictor names which pass the cmi and relelvance threshold
-#' @slot admissible_score is H2OFrame that contains columns, admissible, admissible_index, relevance, cmi, cmi_raw
+#' @slot admissible_score \code{H2OFrame} that contains columns, admissible, admissible_index, relevance, cmi, cmi_raw
 #' @aliases H2OInfogram
 #' @export
 setClass("H2OInfogram", slots = list(model_id='character', algorithm='character', admissible_features='character', admissible_score="H2OFrame"))
@@ -158,7 +158,6 @@ setMethod("initialize", "H2OInfogram", function(.Object, model_id, ...) {
 })
 
 #' wrapper function for instantiating H2OInfogramModel
-#'
 #' @param model_id is string of H2OModel object
 #' @param ... parameters to algorithm, admissible_features, ... 
 #' @return A \code{H2OInfogramModel} object
